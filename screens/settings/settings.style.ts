@@ -7,6 +7,11 @@ const settingsStyles = StyleSheet.create({
 
   settingBodyContainer: {
     gap: 10
+  },
+
+  flagImage: {
+    width: 24,
+    height: 24
   }
 })
 

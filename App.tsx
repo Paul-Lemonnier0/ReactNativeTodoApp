@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -12,6 +12,9 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AppProvider } from '@/context/AppContext';
 import LinkingConfiguration from './navigation/LinkingConfiguration';
 import Navigation from './navigation';
+import UserService from './services/userServices/UserService';
+import { BASE_USER_PREFERENCES } from './constants/User';
+import { UserPreferences } from './types/UserType';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,30 +25,45 @@ SplashScreen.preventAutoHideAsync();
  */
 export default function RootLayout() {
 
+  const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+
   // Get the device's color scheme
   const colorScheme = useColorScheme();
+  const userService = new UserService();
+
+  // Get the user preferences from the cache
 
   // Load the custom font
   const [loaded] = useFonts({
     SpaceMono: require('./assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  useEffect(() => {
+    const fetchUserPreferences = async () => {
+      const userPreferences = await userService.getCachedPreferences(colorScheme);
+
+      setUserPreferences(userPreferences);
+    }
+
+    fetchUserPreferences()
+  }, [])
+
   // Hide the splash screen when the app is loaded
   useEffect(() => {
-    if (loaded) {
+    if (loaded && userPreferences !== null) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, userPreferences]);
 
   // While the font is not loaded, we don't render the app
-  if (!loaded) {
+  if (!loaded || !userPreferences) {
     return null;
   }
 
   // Render the app
   return (
     /* Wraps the app in a gesture handler view, helping us to intercept the user movements (such as closing a bottom sheet) */
-    <AppProvider>
+    <AppProvider userPreferences={userPreferences}>
       <GestureHandlerRootView style={{flex: 1}}>
         {/* Wraps the app in a navigation container, allowing us to navigate between screens */}
         <NavigationContainer linking={LinkingConfiguration} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

@@ -23,7 +23,7 @@ const SettingsScreen: FC<SettingsScreenProps> = () => {
   /**
    * Get the theme and locale from the context
    */
-  const { locale, setLocale, theme, setTheme } = useAppContext()
+  const { locale, handleSetLocale, theme, handleSetTheme } = useAppContext()
 
   /**
    * Get the translations
@@ -76,7 +76,7 @@ const SettingsScreen: FC<SettingsScreenProps> = () => {
         {themeOptions.map(({ icon, value, label }) => (
           <IconRadioButton
             key={value}
-            onPress={() => handleSelection(setTheme, value, theme)}
+            onPress={() => handleSelection(handleSetTheme, value, theme)}
             isSelected={theme === value}
             icon={icon}
             label={label}
@@ -88,10 +88,11 @@ const SettingsScreen: FC<SettingsScreenProps> = () => {
         {languageOptions.map(({ img, value, label }) => (
           <ImageRadioButton
             key={value}
-            onPress={() => handleSelection(setLocale, value, locale)}
+            onPress={() => handleSelection(handleSetLocale, value, locale)}
             isSelected={locale === value}
             img={img}
             label={label}
+            imageStyle={settingsStyles.flagImage}
           />
         ))}
       </SettingsSection>

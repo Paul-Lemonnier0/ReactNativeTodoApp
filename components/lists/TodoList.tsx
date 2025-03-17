@@ -33,7 +33,7 @@ export const TodoListRenderer: FC<TodoListRendererProps> = ({
       }
 
       showsVerticalScrollIndicator={false} // Hide the vertical scroll bar
-      contentContainerStyle={{gap: 10}}
+      contentContainerStyle={{gap: 10, paddingBottom: 20}}
     />
   )
 }

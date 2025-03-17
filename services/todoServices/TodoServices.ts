@@ -4,14 +4,12 @@ import axios from 'axios';
 import ERROR_MESSAGES from '@/constants/Errors';
 import handleApiError from '@/utils/errors/apiErrorHandler';
 
-const IS_EMULATOR = false
-
 /**
  * Service class to interact with the Todo API
  * Provides methods to fetch, add, update, and delete todo items
  */
 class TodoApiService {
-  private baseUrl: string = getBaseURL(IS_EMULATOR);
+  private baseUrl: string = getBaseURL();
   private baseHeaders = { 'Content-Type': 'application/json' };
 
   /**

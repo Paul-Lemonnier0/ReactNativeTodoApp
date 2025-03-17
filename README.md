@@ -12,26 +12,29 @@ This basic To-Do app implements the fundamental tools needed to properly scale a
 - **State management** using Services, Context, and Hooks
 - **Dynamic theme switching** for light/dark mode
 - **Multilingual support** (French & English)
-- **Error handling** for a smoother user experience
+- **Error handling** management of the errors occuring in the app
+- **Input error handling** management of the input errors
 - **Basic unit tests** to ensure functionality
 - **Component testing** (e.g., `src/components/Checkbox`)
 - **Basic animations**, such as adding/removing items in a list
 - **Navigation system**, including a bottom tab bar and screen transitions
 - **Bottom sheet modals** for enhanced UI/UX
 - **Reusable UI components**, including text elements, buttons, inputs, modals, and cards
+- **Cache management**, used for the theme and language of the application
 
 This setup provides a solid foundation for scaling the app efficiently while maintaining good structure and best practices. 🚀
 
-
 ## Get started
 
-1. Install dependencies
+**1.** Edit the **IS_EMULATOR**, **PORT**, **BASE_API_URL** in order to connect with the backend. `(/src/constants/API.ts)`
+
+**2.** Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Start the app
+**3.** Start the app
 
    ```bash
    npm start

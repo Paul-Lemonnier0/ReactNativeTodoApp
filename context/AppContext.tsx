@@ -1,10 +1,11 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
-import * as Localization from 'expo-localization'
 import { I18n } from "i18n-js";
 import { en } from "@/localizations/localizations_en";
 import { fr } from "@/localizations/localizations_fr";
 import { BASE_FALLBACK_LOCALE } from "@/constants/Language";
 import { useColorScheme } from "react-native";
+import UserService from "@/services/userServices/UserService";
+import { UserPreferences } from "@/types/UserType";
 
 /**
  * Defines the structure of the context type (what will be provided by the context)
@@ -12,14 +13,15 @@ import { useColorScheme } from "react-native";
 interface AppContextType {
   locale: string,
   theme: "light" | "dark",
-  setTheme: (theme: "light" | "dark") => void,
-  setLocale: (locale: string) => void,
+  handleSetTheme: (theme: "light" | "dark") => void,
+  handleSetLocale: (locale: string) => void,
   i18n: I18n,
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 interface AppProviderProps {
+  userPreferences: UserPreferences,
   children: ReactNode;
 }
 
@@ -30,19 +32,31 @@ interface AppProviderProps {
  * @param children - The child components that will have access to the context
  * @returns - The App context provider
  */
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+export const AppProvider: React.FC<AppProviderProps> = ({ children, userPreferences }) => {
+  const userService = new UserService();
+
   const colorScheme = useColorScheme()
 
-  const [theme, setTheme] = useState<"light"| "dark">(colorScheme ?? "light")
-  const [locale, setLocale] = useState<string>(Localization.getLocales()[0].languageCode ?? BASE_FALLBACK_LOCALE);
+  const [theme, setTheme] = useState<"light"| "dark">(userPreferences.theme)
+  const [locale, setLocale] = useState<string>(userPreferences.locale);
   const i18n = new I18n({en, fr});
+
+  const handleSetTheme = async (theme: "light" | "dark") => {
+    setTheme(theme)
+    await userService.setUserPreferences({locale, theme})
+  }
+
+  const handleSetLocale = async (locale: string) => {
+    setLocale(locale)
+    await userService.setUserPreferences({locale, theme})
+  }
 
   i18n.locale = locale;
   i18n.defaultLocale = BASE_FALLBACK_LOCALE;
   i18n.enableFallback = true;
 
   return (
-    <AppContext.Provider value={{ i18n, locale, setLocale, theme, setTheme }}>
+    <AppContext.Provider value={{ i18n, locale, handleSetLocale, theme, handleSetTheme }}>
       {children}
     </AppContext.Provider>
   );
